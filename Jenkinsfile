@@ -1,6 +1,10 @@
 pipeline {
     agent any
-
+ environment {
+    
+        IMAGE_NAME = 'html-portfolio'
+        CONTAINER_NAME = 'html-portfolio-container'
+    }
     stages {
 
         stage('Checkout Code') {
