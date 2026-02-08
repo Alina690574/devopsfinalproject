@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     stages {
 
         stage('Clone Repository') {
@@ -11,24 +15,23 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker compose build'
+                bat 'docker compose build'
             }
         }
 
         stage('Stop Old Containers') {
             steps {
-                sh 'docker compose down'
+                bat 'docker compose down'
             }
         }
 
-       stage('Deploy with Docker Compose') {
-    steps {
-        sh '''
-        docker compose down || true
-        docker compose up -d --build
-        '''
-    }
-}
-
+        stage('Deploy with Docker Compose') {
+            steps {
+                bat '''
+                docker compose down
+                docker compose up -d --build
+                '''
+            }
+        }
     }
 }
