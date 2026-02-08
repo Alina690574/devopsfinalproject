@@ -1,39 +1,34 @@
 pipeline {
-agent any
+    agent any
 
+    stages {
 
-environment {
-    IMAGE_NAME = 'html-portfolio'
-    CONTAINER_NAME = 'html-portfolio-container'
-}
-
-triggers {
-    // Poll SCM every 5 minutes
-    pollSCM('* * * * *')
-}
-
-stages {
-
-    stage('Checkout Code') {
-        steps {
-            checkout scm
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/Alina690574/devopsfinalproject.git'
+            }
         }
-    }
 
-    stage('Verify Files') {
-        steps {
-            bat 'echo Checking project files'
-            bat 'dir'
-            bat 'if not exist index.html exit 1'
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker compose build'
+            }
         }
-    }
 
-    stage('Success') {
-        steps {
-            bat 'echo HTML Portfolio CI pipeline completed'
+        stage('Stop Old Containers') {
+            steps {
+                sh 'docker compose down'
+            }
         }
+
+       stage('Deploy with Docker Compose') {
+    steps {
+        sh '''
+        docker compose down || true
+        docker compose up -d --build
+        '''
     }
 }
 
-
+    }
 }
